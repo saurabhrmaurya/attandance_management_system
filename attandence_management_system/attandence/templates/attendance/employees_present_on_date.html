@@ -1,0 +1,41 @@
+<!-- employees_present_on_date.html -->
+{% extends 'attendance/admin_base.html' %}
+
+{% block content %}
+  <h2>Employees Present on {% if selected_date %}{{ selected_date|date:"Y-m-d" }}{% else %}Select a Date{% endif %}</h2>
+
+  <!-- Date Selection Form -->
+  <form method="POST">
+    {% csrf_token %}
+    <label for="date">Select a Date:</label>
+    <input type="date" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+    <button type="submit">Show Present Employees</button>
+  </form>
+
+  {% if selected_date %}
+    <h3>Present Employees on {{ selected_date|date:"Y-m-d" }}:</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Employee Name</th>
+          <th>Position</th>
+          <th>Check-in Time</th>
+          <th>Check-out Time</th>
+          <th>Correction</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in employees_present %}
+          <tr>
+            <td>{{ record.employee.full_name }}</td>
+            <td>{{ record.employee.position }}</td>
+            <td>{{ record.attendance.check_in_time }}</td>
+            <td>{{ record.attendance.check_out_time }}</td>
+            <td>
+              <a href="{% url 'correct_attendance' record.attendance.id %}" class="btn btn-primary">Correct</a>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'attendance/base.html' %}
+
+{% block content %}
+  <h2>Request Attendance Correction</h2>
+
+  <p>Employee: {{ attendance.employee.full_name }}</p>
+  <p>Date: {{ attendance.date }}</p>
+  <p>Check-in: {{ attendance.check_in_time }}</p>
+  <p>Check-out: {{ attendance.check_out_time }}</p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="reason">Reason for correction:</label>
+      <textarea id="reason" name="reason" rows="4" class="form-control" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Request</button>
+  </form>
+
+  <br>
+  <a href="{% url 'employee_dashboard' %}">Go to back </a>
+{% endblock %}

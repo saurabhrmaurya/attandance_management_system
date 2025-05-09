@@ -1,0 +1,196 @@
+{% extends "attendance/base.html" %}
+{% block content %}
+
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <!-- Welcome and Mark Attendance Button -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-center md:text-left text-gray-800">👋 Welcome, {{ employee.full_name }}</h2>
+
+        <!-- Mark Attendance Button -->
+        <a href="{% url 'mark_attendance' %}" class="mt-4 md:mt-0 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300">
+            📌 Mark Attendance
+        </a>
+    </div>
+
+    <!-- Profile and Attendance Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        
+        <!-- Profile Card with Scroll Animation -->
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-6 rounded-2xl shadow-lg scroll-animate" id="profileCard">
+            <div class="flex items-center space-x-4 mb-5">
+                <div class="flex-shrink-0">
+                    <div class="h-16 w-16 rounded-full bg-white flex items-center justify-center text-indigo-600 font-bold text-2xl">
+                        {{ employee.full_name|slice:":1" }}
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-2xl font-semibold">{{ employee.full_name }}</h4>
+                    <p class="text-indigo-100">{{ employee.position|default:"Position Not Set" }}</p>
+                </div>
+            </div>
+            <div class="text-sm space-y-2">
+                <p><strong>Email:</strong> {{ employee.email }}</p>
+                <p><strong>Phone:</strong> {{ employee.phone|default:"Not Provided" }}</p>
+                <p><strong>Designation :</strong> {{ employee.role|default:"Not Assigned" }}</p>
+                <p><strong>Location:</strong> {{ officeLocation.name|default:"Not Provided" }}</p>
+            </div>
+        </div>
+
+        <!-- Attendance Summary Card with Scroll Animation -->
+        <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-200 scroll-animate" id="attendanceSummaryCard">
+            <h4 class="text-xl font-semibold mb-4 text-indigo-600">📊 Attendance Summary</h4>
+            <div class="flex flex-col space-y-3 text-gray-700 text-lg">
+                <div class="flex justify-between">
+                    <span>Total Days Worked:</span> 
+                    <span class="font-bold text-indigo-700">{{ total_days_worked }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Total Working Hours:</span> 
+                    <span class="font-bold text-indigo-700">{{ total_work_hours }}</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Working Hours Chart with Scroll Animation -->
+    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-200 mb-8 scroll-animate" id="workingHoursChart">
+        <h4 class="text-xl font-semibold mb-6 text-indigo-600">📈 Working Hours Trend</h4>
+        <div class="relative w-full h-64">
+            <canvas id="attendanceGraph" class="absolute top-0 left-0 w-full h-full"></canvas>
+        </div>
+    </div>
+
+    <!-- Attendance Records Table with Scroll Animation -->
+    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-200 scroll-animate" id="attendanceTable">
+        <h4 class="text-xl font-semibold mb-6 text-indigo-600">📅 Attendance Records</h4>
+        <div class="overflow-x-auto max-h-96">
+            <table class="min-w-full text-sm text-gray-600">
+                <thead class="bg-indigo-50 text-indigo-700 sticky top-0">
+                    <tr>
+                        <th class="px-4 py-3 text-left">Date</th>
+                        <th class="px-4 py-3 text-left">Check-In</th>
+                        <th class="px-4 py-3 text-left">Check-Out</th>
+                        <th class="px-4 py-3 text-left">Late?</th>
+                        <th class="px-4 py-3 text-left">Early Out?</th>
+                        <th class="px-4 py-3 text-left">Status</th>
+                        <th class="px-4 py-3 text-left">Correction Request</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for att in attendances %}
+                    <tr>
+                        <td class="px-4 py-3">{{ att.date }}</td>
+                        <td class="px-4 py-3">{{ att.check_in_time|default:"--" }}</td>
+                        <td class="px-4 py-3">{{ att.check_out_time|default:"--" }}</td>
+                        <td class="px-4 py-3">
+                            {% if att.is_late %}
+                                <span class="text-red-500 font-semibold">Yes</span>
+                            {% else %}
+                                <span class="text-green-500 font-semibold">No</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">
+                            {% if att.is_early_out %}
+                                <span class="text-yellow-500 font-semibold">Yes</span>
+                            {% else %}
+                                <span class="text-green-500 font-semibold">No</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">
+                            {% if att.status == "Present" %}
+                                <span class="text-green-600 font-semibold">{{ att.status }}</span>
+                            {% elif att.status == "Leave" %}
+                                <span class="text-blue-600 font-semibold">{{ att.status }}</span>
+                            {% else %}
+                                <span class="text-red-600 font-semibold">{{ att.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center py-5">No attendance records found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Scroll Animation CSS -->
+<style>
+    .scroll-animate {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+
+    .scroll-animate.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Scroll Animation
+    window.addEventListener('scroll', function() {
+        const elements = document.querySelectorAll('.scroll-animate');
+        elements.forEach(function(element) {
+            if (element.getBoundingClientRect().top < window.innerHeight) {
+                element.classList.add('show');
+            }
+        });
+    });
+
+    // Chart.js for Working Hours Trend
+    const ctx = document.getElementById('attendanceGraph').getContext('2d');
+    const attendanceGraph = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ graph_labels|safe }},
+            datasets: [{
+                label: 'Hours Worked',
+                data: {{ graph_data|safe }},
+                borderColor: 'rgba(99, 102, 241, 1)',
+                backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                pointRadius: 5,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Hours'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Dates'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

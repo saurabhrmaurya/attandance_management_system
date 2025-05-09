@@ -1,0 +1,46 @@
+{% extends 'attendance/admin_base.html' %}
+
+{% block content %}
+  <h2>Correct Attendance for {{ attendance.employee.full_name }} on {{ attendance.date }}</h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-info">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  {% if attendance.photo %}
+    <div class="text-center mb-4">
+      <img src="{{ attendance.photo.url }}" alt="Attendance Photo" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+    </div>
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="check_in_time">Check-in Time</label>
+      <input type="time" id="check_in_time" name="check_in_time" class="form-control" value="{{ attendance.check_in_time|time:"H:i" }}">
+    </div>
+    
+    <div class="form-group">
+      <label for="check_out_time">Check-out Time</label>
+      <input type="time" id="check_out_time" name="check_out_time" class="form-control" value="{{ attendance.check_out_time|time:"H:i" }}">
+    </div>
+    
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" name="is_late" id="is_late" {% if attendance.is_late %}checked{% endif %}>
+      <label class="form-check-label" for="is_late">Is Late?</label>
+    </div>
+
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" name="is_early_out" id="is_early_out" {% if attendance.is_early_out %}checked{% endif %}>
+      <label class="form-check-label" for="is_early_out">Is Early Out?</label>
+    </div>
+
+    <br>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </form>
+
+  <br>
+  <a href="{% url 'employees_present_on_date' %}" class="btn btn-secondary">Back to Attendance List</a>
+{% endblock %}

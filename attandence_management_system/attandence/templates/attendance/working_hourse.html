@@ -1,0 +1,32 @@
+{% extends "attendance/admin_base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Office Working Hours</h2>
+
+    {% if messages %}
+      {% for message in messages %}
+         <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="working_start_time" class="form-label">Working Start Time</label>
+            <input type="time" name="working_start_time" id="working_start_time" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="working_end_time" class="form-label">Working End Time</label>
+            <input type="time" name="working_end_time" id="working_end_time" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="grace_minutes" class="form-label">Grace Minutes (Late Allowance)</label>
+            <input type="number" name="grace_minutes" id="grace_minutes" class="form-control" min="0" value="0" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Settings</button>
+    </form>
+</div>
+{% endblock %}

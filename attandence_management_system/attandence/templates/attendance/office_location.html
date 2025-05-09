@@ -1,0 +1,33 @@
+{% extends "attendance/admin_base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">Manage Office Location</h2>
+    {% if messages %}
+    {% for message in messages %}
+       <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">Office Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ location.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="latitude" class="form-label">Latitude</label>
+            <input type="text" class="form-control" id="latitude" name="latitude" value="{{ location.latitude }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="longitude" class="form-label">Longitude</label>
+            <input type="text" class="form-control" id="longitude" name="longitude" value="{{ location.longitude }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="allowed_range_km" class="form-label">Allowed Range (KM)</label>
+            <input type="text" class="form-control" id="allowed_range_km" name="allowed_range_km" value="{{ location.allowed_range_km }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Location</button>
+    </form>
+</div>
+{% endblock %}

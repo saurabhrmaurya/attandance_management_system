@@ -1,0 +1,51 @@
+{% extends "attendance/admin_base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="text-center mb-4">Admin Dashboard</h2>
+    
+    <!-- Dashboard Metrics -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h5 class="card-title">Total Employees</h5>
+                    <p class="display-4">{{ total_employees }}</p>
+                    <a href="{% url 'employee_list' %}" class="btn btn-primary">View Employees</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h5 class="card-title">Total Attendance Today</h5>
+                    <p class="display-4">{{ total_attendance }}</p>
+                    <a href="{% url 'employees_present_on_date' %}" class="btn btn-primary">See Emplyess Here !</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h5 class="card-title">Office Location</h5>
+                    <p>{{ office_location.name }}</p>
+                    <a href="{% url 'office_location' %}" class="btn btn-primary">Edit Location</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphs (Optional) -->
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h5 class="card-title">Attendance Graph</h5>
+                    <!-- Example chart (you can integrate Chart.js or similar libraries here) -->
+                    <div id="attendanceGraph" style="height: 300px; background-color: #f0f0f0;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

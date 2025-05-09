@@ -1,0 +1,55 @@
+{% extends 'attendance/admin_base.html' %}
+
+{% block title %}Register New Employee{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">Add New Employee</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'employee_register' %}" class="p-4 shadow-sm rounded bg-light">
+        {% csrf_token %}
+        
+        <div class="form-group mb-3">
+            <label for="full_name">Full Name</label>
+            <input type="text" name="full_name" class="form-control" required>
+        </div>
+      
+        <div class="form-group mb-3">
+            <label for="email">Email</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+      
+        <div class="form-group mb-3">
+            <label for="phone">Phone Number</label>
+            <input type="text" name="phone" class="form-control" required>
+        </div>
+      
+        <div class="form-group mb-3">
+            <label for="position">Position</label>
+            <input type="text" name="position" class="form-control" required>
+        </div>
+      
+        <div class="form-group mb-3">
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+      
+        <div class="form-group mb-4">
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" name="confirm_password" class="form-control" required>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">Add</button>
+                    </div>
+    </form>
+</div>
+{% endblock %}
