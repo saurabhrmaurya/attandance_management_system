@@ -23,9 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-u3zn%bgafnd4%*%3@+1y@l^v!l99m&dnv^gkzz3cv%1ar483tm'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = TrueALLOWED_HOSTS = [
+    'attandance-management-system.onrender.com',
+    '127.0.0.1',
+    'localhost',
+]
 
-ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    'https://attandance-management-system.onrender.com',
+]
 
 
 # Application definition
